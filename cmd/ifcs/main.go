@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	R "github.com/fbaube/repo"
-	"github.com/fbaube/repo/sqlite"
+	RS "github.com/fbaube/reposqlite"
 	_ "github.com/fbaube/sqlite3"
 )
 
@@ -20,17 +20,17 @@ type SimpleRepo interface {
 
 func main() {
 	panic("oops")
-	sr, e := sqlite.NewRepoAtPath("mmmc.db")
+	rs, e := RS.NewRepoAtPath("mmmc.db")
 	if e != nil {
 		panic(e)
 	}
-	i1, _ = sr.(R.DBImplementation)
+	i1, _ = rs.(R.DBImplementation)
 	fmt.Printf("R.DBImplementation: %T \n", i1)
-	i2, _ = R.DBImplementation(sr)
+	i2, _ = R.DBImplementation(rs)
 	fmt.Printf("R.DBImplementation: %T \n", i2)
-	_, _ = sr.(R.DBEntity)
-	_, _ = sr.(R.DBBackups)
-	_, _ = sr.(R.SessionLifecycle)
-	_, _ = sr.(R.StatementBuilder)
-	_, _ = sr.(R.QueryRunner)
+	_, _ = rs.(R.DBEntity)
+	_, _ = rs.(R.DBBackups)
+	_, _ = rs.(R.SessionLifecycle)
+	_, _ = rs.(R.StatementBuilder)
+	_, _ = rs.(R.QueryRunner)
 }

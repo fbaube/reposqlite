@@ -67,9 +67,18 @@ func (p *SqliteRepo) EmptyAppTables() error {
 		// p.Handle().MustExec(CTS)
 		_, err := p.Exec(CTS)
 		if err != nil {
-			panic(err)
+			strerr := err.Error()
+			if S.HasPrefix(strerr, "no such table:") {
+				L.L.Info("No such table: " + c.Name)
+			} else {
+				L.L.Error("reposqlite.emptyAllTbls: " + strerr)
+				return fmt.Errorf(
+					"sqliterepo.emptyAppTbls(%s) "+
+						"failed: %w", p.Path(), e)
+			}
+		} else {
+			L.L.Info("Deleted all from table: " + S.ToLower(c.Name))
 		}
-		L.L.Info("Deleted all from table: " + S.ToLower(c.Name))
 	}
 	L.L.Warning("SQLAR not emptied, utils/repo/sqlite/impl_apptables.go L83")
 	if e != nil {

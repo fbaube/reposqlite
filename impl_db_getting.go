@@ -9,6 +9,7 @@ import (
 	FU "github.com/fbaube/fileutils"
 	SU "github.com/fbaube/stringutils"
 	// _ "github.com/mattn/go-sqlite3" // to get init()
+	L "github.com/fbaube/mlog"
 	_ "github.com/fbaube/sqlite3" // to get init()
 	"os"
 	FP "path/filepath"
@@ -165,27 +166,27 @@ func /*(p SqliteRepoImplem)*/ NewRepoAtPath(aPath string) (pSR *SqliteRepo, e er
 
 	// pDB, e = sqlx.Open("sqlite3", "file:"+aPath+"?foreign_keys=on")
 	if !S.HasPrefix(aPath, "file:") {
-		println("cli/misc: adding to file URL the prefix \"file:\"")
+		// println("Adding to file URL the prefix \"file:\"")
 		aPath = "file:" + aPath
 	}
 	pDB, e = sql.Open("sqlite3", aPath+"?foreign_keys=on")
 	if e != nil {
 		return nil, fmt.Errorf(errPfx+"sql.open: %w", e)
 	}
-	fmt.Println("utils/repo/sqlite/misc.go: L174: DB FILE IS OPEN:", aPath)
+	L.L.Info("DB file is open: " + aPath)
 	// https://golang.org/pkg/database/sql/#Open
 	// Open might simply validate its arguments without creating a DB
 	// connection. To verify that the data source name is valid, call Ping.
 	if e = pDB.Ping(); e == nil {
 		if e = pDB.PingContext(context.Background()); e != nil {
 			return nil, fmt.Errorf(
-				"sqlite.repo.new: sql.Ping[Context]: %w", e)
+				"reposqlite.new: sql.Ping[Context]: %w", e)
 		}
 	}
-	fmt.Println("utils/repo/sqlite/impl_db_getting: L184: AND PING WORKED")
+	L.L.Info("DB ping worked")
 	// pDB = dbx.NewFromDB(psDB, "sqlite")
 
-	println("New DB created at:", SU.Tildotted(aPath))
+	L.L.Info("New DB created at: " + SU.Tildotted(aPath))
 	// drivers := sql.Drivers()
 	// println("DB driver(s):", fmt.Sprintf("%+v", drivers))
 	pSR = new(SqliteRepo)

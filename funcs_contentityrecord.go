@@ -25,7 +25,7 @@ func NewContentityRow(pPP *FU.PathProps, pPA *FU.PathAnalysis) (*RM.ContentityRo
 	if pPA.MarkupType() == "UNK" {
 		// panic("UNK MarkupType in ExecuteStages")
 		return nil, fmt.Errorf(
-			"sqlite.fxCntyrow.NewCR: got MarkupType UNK")
+			"reposqlite.fxCntyrow.NewCR: got MarkupType UNK")
 	}
 	// var e error
 	pNewCR := new(RM.ContentityRow)

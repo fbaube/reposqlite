@@ -33,43 +33,99 @@ OTHR = "othr"
 /*
 	FKEY's
 
-idx_inbatch integer not null references inbatch,
+idx_inbatch integer not null references inbatch, -- int64 in Go
 foreign key(idx_inbatch) references inbatch(idx_inbatch)
+
+BUT a table can have multiple references into another table !
+That is to way, when there are N-to-N links within a table,
+we need to be able to handle this using a link table.
+
+idx_cnt_map integer not null references contentity,
+idx_cnt_tpc integer not null references contentity,
+foreign key(idx_cnt_map) references contentity(idx_contentity),
+foreign key(idx_cnt_tpc) references contentity(idx_contentity),
+
+We can detect this situation, and correct for it,
+only by counting underscores in the StorName.
 */
+
 func (pSR *SqliteRepo) BuildCreateTableStmt(pTD *RU.TableDescriptor) (string, error) {
-	var sb S.Builder
+	var sb, sb2 S.Builder
 	sb.WriteString(fmt.Sprintf("CREATE TABLE %s(\n", pTD.Name))
-	fmt.Printf("GenCreTblStmt: ")
+	sb2.WriteString("reposqlite.GenCreTblStmt: ")
 	for _, pCS := range pTD.ColumnSpecs {
 		cnm := pCS.StorName // column name
 		fdt := pCS.Fundatype
-		fmt.Printf("%s:%s, ", cnm, fdt)
+		sb2.WriteString(fmt.Sprintf("%s:%s, ", cnm, fdt))
 	}
-	fmt.Printf("\n")
+	fmt.Printf(sb2.String() + "\n")
 
-	// PRIMARY KEY IS ASSUMED
-	// idx_tbl integer not null primary key autoincrement,
+	// PRIMARY KEY IS ASSUMED - DO IT FIRST
+	// idx_mytable integer not null primary key autoincrement,
 	sb.WriteString(pTD.IDName +
 		" integer not null primary key autoincrement, " +
 		"-- NOTE: integer, not int. \n")
 
 	for _, pCS := range pTD.ColumnSpecs {
-		cnm := pCS.StorName // column name
-		fmt.Println("Creating column: %s \n", pCS.String())
+		colName := pCS.StorName // column name in DB
+		fmt.Sprintf("Creating column: %s \n", pCS.String())
 		switch pCS.Fundatype {
 		case D.PKEY:
 			panic("DUPE PRIMARY KEY")
+
 		case D.FKEY:
-			idxnam := pCS.StorName
-			tblnam := pCS.DispName
-			sb.WriteString(cnm + fmt.Sprintf(
-				" foreign key(%s) references %s(%s),\n",
-				idxnam, tblnam, idxnam))
+			//> D.ColumnSpec{D.FKEY, "idx_inbatch", "inbatch",
+			//>  "Input batch of imported content"},
+			// referencing fields's name is idx_inbatch
+			refgField := colName
+			// referenced table's name is inbatch
+			refdTable := pCS.DispName
+
+			// Count up underscores (per comment above)
+			ss := S.Split(refgField, "_")
+			switch len(ss) {
+
+			case 2: // normal case, for example:
+				//> idx_inbatch integer not null ref's inbatch,
+				//> foreign key(idx_inbatch) references
+				//>     inbatch(idx_inbatch)
+				sb.WriteString(fmt.Sprintf(
+					"%s integer not null references %s,\n",
+					refgField, refdTable))
+				sb.WriteString(fmt.Sprintf(
+					"foreign key(%s) references %s(%s),\n",
+					refgField, refdTable, refgField))
+			case 3: // multiple indices into same table, e.g.
+				//> idx_cnt_map integer not null ref's cont'y,
+				//> frn key(idx_cnt_map) refs cont'y(idx_cont'y),
+				//> idx_cnt_tpc integer not null ref's cont'y,
+				//> frn key(idx_cnt_tpc) refs cont'y(idx_cont'y),
+				// We have to deduce "idx_contentity", which
+				// we can do confidently after passing checks.
+				var refdField string
+				if S.EqualFold(ss[0], "idx") &&
+					S.EqualFold(ss[1][0:1], refdTable[0:1]) {
+					refdField = "idx_" + refdTable
+					sb.WriteString(fmt.Sprintf(refgField+
+						" integer not null "+
+						"references %s,\n", refdTable))
+					sb.WriteString(fmt.Sprintf("foreign "+
+						"key(%s) references %s(%s),\n",
+						refgField, refdTable, refdField))
+				} else {
+					return "", fmt.Errorf(
+						"Malformed a_b_c FKEY: %s,%s,%s",
+						refgField, refdTable, refdField)
+				}
+			default:
+				return "", fmt.Errorf("Malformed FKEY: "+
+					"%s,%s,%s", refgField, refdTable)
+			}
 		case D.TEXT:
-			sb.WriteString(cnm + " text not null,\n")
+			sb.WriteString(colName + " text not null,\n")
 		case D.INTG:
 			// filect int not null check (filect >= 0) default 0
-			sb.WriteString(cnm + " int not null,\n")
+			sb.WriteString(colName + " int not null,\n")
 		/* Unimplem'd:
 		case D.FLOT:
 		case D.BLOB:
@@ -83,8 +139,8 @@ func (pSR *SqliteRepo) BuildCreateTableStmt(pTD *RU.TableDescriptor) (string, er
 	}
 	// trim off final ",\n"
 	ss := sb.String()
-	sb2 := ss[0:len(ss)-2] + "\n) STRICT;"
-	return sb2, nil
+	sb3 := ss[0:len(ss)-2] + "\n) STRICT;\n"
+	return sb3, nil
 }
 
 /*

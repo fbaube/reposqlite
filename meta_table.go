@@ -57,7 +57,7 @@ func (pDB SqliteRepo) DumpTableSchema_sqlite(tableName string) (string, error) {
 		// Is OK!
 	default:
 		return "", errors.New(
-			"simplerepo.sqlite.dumptableschema: not sqlite")
+			"reposqlite.dumptableschema: not sqlite")
 	}
 	var theCols []*D.DbColInDb
 	var sb S.Builder
@@ -71,12 +71,12 @@ func (pDB SqliteRepo) DumpTableSchema_sqlite(tableName string) (string, error) {
 	}
 	for i, c := range theCols {
 		sType = ""
-		if c.Fundatype != "text" {
+		if c.Fundatype != D.TEXT {
 			sType = "(" + string(c.Fundatype) + "!)"
 		}
-		sb.Write([]byte(fmt.Sprintf(
-			"[%d]%s%s / ", i, sType, c.StorName)))
+		sb.WriteString(fmt.Sprintf(
+			"[%d]%s%s / ", i, sType, c.StorName))
 	}
-	sb.Write([]byte(fmt.Sprintf("%d fields", len(theCols))))
+	sb.WriteString(fmt.Sprintf("%d fields", len(theCols)))
 	return sb.String(), nil
 }
