@@ -55,8 +55,8 @@ func (pSR *SqliteRepo) BuildCreateTableStmt(pTD *RU.TableDescriptor) (string, er
 	sb2.WriteString("reposqlite.GenCreTblStmt: ")
 	for _, pCS := range pTD.ColumnSpecs {
 		cnm := pCS.StorName // column name
-		fdt := pCS.Fundatype
-		sb2.WriteString(fmt.Sprintf("%s:%s, ", cnm, fdt))
+		bdt := pCS.BasicDatatype
+		sb2.WriteString(fmt.Sprintf("%s:%s, ", cnm, bdt))
 	}
 	fmt.Printf(sb2.String() + "\n")
 
@@ -69,11 +69,11 @@ func (pSR *SqliteRepo) BuildCreateTableStmt(pTD *RU.TableDescriptor) (string, er
 	for _, pCS := range pTD.ColumnSpecs {
 		colName := pCS.StorName // column name in DB
 		fmt.Sprintf("Creating column: %s \n", pCS.String())
-		switch pCS.Fundatype {
-		case D.PKEY:
+		switch pCS.BasicDatatype {
+		case "PRKEY": // D.PKEY:
 			panic("DUPE PRIMARY KEY")
 
-		case D.FKEY:
+		case "FRKEY": // D.FKEY:
 			//> D.ColumnSpec{D.FKEY, "idx_inbatch", "inbatch",
 			//>  "Input batch of imported content"},
 			// referencing fields's name is idx_inbatch
@@ -134,7 +134,7 @@ func (pSR *SqliteRepo) BuildCreateTableStmt(pTD *RU.TableDescriptor) (string, er
 		case D.OTHR:
 		*/
 		default:
-			panic(pCS.Fundatype)
+			panic(pCS.BasicDatatype)
 		}
 	}
 	// trim off final ",\n"

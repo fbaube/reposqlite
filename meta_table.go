@@ -41,7 +41,7 @@ func (pDB SqliteRepo) DbTblColsInDb(tableName string) ([]*D.DbColInDb, error) {
 	}
 	for _, ct := range CTs {
 		dci := new(D.DbColInDb)
-		dci.Fundatype = D.Fundatype(ct.DatabaseTypeName())
+		dci.BasicDatatype = D.BasicDatatype(ct.DatabaseTypeName())
 		dci.StorName = ct.Name()
 		retval = append(retval, dci)
 	}
@@ -71,8 +71,8 @@ func (pDB SqliteRepo) DumpTableSchema_sqlite(tableName string) (string, error) {
 	}
 	for i, c := range theCols {
 		sType = ""
-		if c.Fundatype != D.TEXT {
-			sType = "(" + string(c.Fundatype) + "!)"
+		if c.BasicDatatype != D.TEXT {
+			sType = "(" + string(c.BasicDatatype) + "!)"
 		}
 		sb.WriteString(fmt.Sprintf(
 			"[%d]%s%s / ", i, sType, c.StorName))
