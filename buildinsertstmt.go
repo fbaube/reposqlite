@@ -120,9 +120,9 @@ func (pSR *SqliteRepo) BuildInsertStmt(pTD *RU.TableDescriptor) (string, error) 
 				return "", fmt.Errorf("Malformed FKEY: "+
 					"%s,%s,%s", refgField, refdTable)
 			}
-		case D.TEXT:
+		case D.BDT_TEXT:
 			sb.WriteString(colName + " text not null,\n")
-		case D.INTG:
+		case D.BDT_INTG:
 			// filect int not null check (filect >= 0) default 0
 			sb.WriteString(colName + " int not null,\n")
 		/* Unimplem'd:

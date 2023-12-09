@@ -71,8 +71,8 @@ func (pDB SqliteRepo) DumpTableSchema_sqlite(tableName string) (string, error) {
 	}
 	for i, c := range theCols {
 		sType = ""
-		if c.BasicDatatype != D.TEXT {
-			sType = "(" + string(c.BasicDatatype) + "!)"
+		if c.BasicDatatype != D.BDT_TEXT {
+			sType = "(" + c.BasicDatatype.S() + "!)"
 		}
 		sb.WriteString(fmt.Sprintf(
 			"[%d]%s%s / ", i, sType, c.StorName))
