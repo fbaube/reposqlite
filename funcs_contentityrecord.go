@@ -12,13 +12,14 @@ import (
 	// RU "github.com/fbaube/repoutils"
 	RM "github.com/fbaube/rowmodels"
 	SU "github.com/fbaube/stringutils"
+	CA "github.com/fbaube/contentanalysis"
 )
 
 // NewContentityRow does content fetching &
 // analysis, while "promoting" a [PathProps];
 // it work for directories and symlinks too.
 // .
-func NewContentityRow(pPP *FU.PathProps, pPA *FU.PathAnalysis) (*RM.ContentityRow, error) {
+func NewContentityRow(pPP *FU.PathProps, pPA *CA.PathAnalysis) (*RM.ContentityRow, error) {
 	if pPP == nil || pPA == nil {
 		panic("OOPS")
 	}

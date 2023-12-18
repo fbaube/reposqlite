@@ -1,32 +1,33 @@
 module github.com/fbaube/reposqlite
 
-go 1.20
+go 1.21.5
 
 require (
-	github.com/fbaube/dsmnd v0.0.0-20230622205413-6095fd80db31
-	github.com/fbaube/fileutils v0.0.0-20230623071738-0db5b6a18847
-	github.com/fbaube/mlog v0.0.0-20230205182808-c77321da3ff3
+	github.com/fbaube/contentanalysis v0.0.0-20231218211126-ec40dcf8f567
+	github.com/fbaube/dsmnd v0.0.0-20231218095557-5b913bb5905b
+	github.com/fbaube/fileutils v0.0.0-20231218210156-f6a37eab1eae
+	github.com/fbaube/mlog v0.0.0-20230904080411-cfac35fed413
 	github.com/fbaube/repo v0.0.0-20230702193159-4a0df3ed961a
-	github.com/fbaube/repoutils v0.0.0-20230623084640-e4530f5028d4
-	github.com/fbaube/rowmodels v0.0.0-20230622080238-d1b28a526896
+	github.com/fbaube/repoutils v0.0.0-20230904080659-aafe24b842a6
+	github.com/fbaube/rowmodels v0.0.0-20231218215515-c844fa325e81
 	github.com/fbaube/sqlite3 v0.0.0-20230623201839-76cebbc048ba
-	github.com/fbaube/stringutils v0.0.0-20230622210105-a1af04c1f93d
+	github.com/fbaube/stringutils v0.0.0-20231208083612-f585d951ce32
 )
 
 require (
-	github.com/fatih/color v1.15.0 // indirect
-	github.com/fbaube/ctoken v0.0.0-20230518060940-6f364ff08c9d // indirect
+	github.com/fatih/color v1.16.0 // indirect
+	github.com/fbaube/ctoken v0.0.0-20231208083054-ae8e77cde530 // indirect
 	github.com/fbaube/logutils v0.0.0-20230623084753-053ea535035d // indirect
-	github.com/fbaube/miscutils v0.0.0-20230702174835-89345331d87b // indirect
-	github.com/fbaube/wasmutils v0.0.0-20230623084957-b4f528abb99e // indirect
-	github.com/fbaube/xmlutils v0.0.0-20230518061403-2465e549e10a // indirect
-	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
+	github.com/fbaube/miscutils v0.0.0-20231117113020-2270027d01bd // indirect
+	github.com/fbaube/wasmutils v0.0.0-20231209183154-e25018375bc2 // indirect
+	github.com/fbaube/xmlutils v0.0.0-20230904080817-586c01346ef2 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.19 // indirect
+	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mgutz/str v1.2.0 // indirect
-	golang.org/x/exp v0.0.0-20230817173708-d852ddb80c63 // indirect
-	golang.org/x/net v0.14.0 // indirect
-	golang.org/x/sys v0.12.0 // indirect
-	golang.org/x/tools v0.12.1-0.20230815132531-74c255bcf846 // indirect
+	golang.org/x/exp v0.0.0-20231214170342-aacd6d4b4611 // indirect
+	golang.org/x/net v0.19.0 // indirect
+	golang.org/x/sys v0.15.0 // indirect
+	golang.org/x/tools v0.16.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
