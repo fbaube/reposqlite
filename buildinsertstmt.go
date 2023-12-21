@@ -19,11 +19,11 @@ Create Table [ If Not Exists ] [schemaname.]tablename
 
 /* REF
 TABL Fundatype = "tabl" // This datum describes a table !
-INTG = "1234" // "INT"   // SQLITE_INTEGER 1
-FLOT = "1.0f" // "FLOAT" // SQLITE_FLOAT   2
-TEXT = "AaZz" // "TEXT"  // SQLITE_TEXT    3
-BLOB = "blob" // "BLOB"  // SQLITE_BLOB    4
-NULL = "null" // "NULL"  // SQLITE_NULL    5
+INTG = "1234" // SQLITE_INTEGER 1
+FLOT = "1.0f" // SQLITE_FLOAT   2
+TEXT = "AaZz" // SQLITE_TEXT    3
+BLOB = "blob" // SQLITE_BLOB    4
+NULL = "null" // SQLITE_NULL    5
 PKEY = "pkey" // PRIMARY KEY (SQLite "INTEGER")
 FKEY = "fkey" // FOREIGN KEY (SQLite "INTEGER")
 LIST = "list" // table type, one per enumeration ??
@@ -54,7 +54,7 @@ func (pSR *SqliteRepo) BuildInsertStmt(pTD *RU.TableDescriptor) (string, error) 
 	sb2.WriteString("reposqlite.GenCreTblStmt: ")
 	for _, pCS := range pTD.ColumnSpecs {
 		cnm := pCS.StorName // column name
-		bdt := pCS.BasicDatatype
+		bdt := pCS.Datatype
 		sb2.WriteString(fmt.Sprintf("%s:%s, ", cnm, bdt))
 	}
 	fmt.Printf(sb2.String() + "\n")
@@ -68,7 +68,11 @@ func (pSR *SqliteRepo) BuildInsertStmt(pTD *RU.TableDescriptor) (string, error) 
 	for _, pCS := range pTD.ColumnSpecs {
 		colName := pCS.StorName // column name in DB
 		fmt.Sprintf("Creating column: %s \n", pCS.String())
-		switch pCS.BasicDatatype {
+		SFT := D.SemanticFieldType(pCS.Datatype)
+                BDT := SFT.BasicDatatype()
+
+                switch BDT {
+
 		case "PRKEY": // D.PKEY:
 			panic("DUPE PRIMARY KEY")
 
@@ -133,7 +137,7 @@ func (pSR *SqliteRepo) BuildInsertStmt(pTD *RU.TableDescriptor) (string, error) 
 		case D.OTHR:
 		*/
 		default:
-			panic(pCS.BasicDatatype)
+			panic(pCS.Datatype)
 		}
 	}
 	// trim off final ",\n"

@@ -4,12 +4,12 @@ go 1.21.5
 
 require (
 	github.com/fbaube/contentanalysis v0.0.0-20231218211126-ec40dcf8f567
-	github.com/fbaube/dsmnd v0.0.0-20231218095557-5b913bb5905b
+	github.com/fbaube/dsmnd v0.0.0-20231221072152-35b95935ea5a
 	github.com/fbaube/fileutils v0.0.0-20231218210156-f6a37eab1eae
 	github.com/fbaube/mlog v0.0.0-20230904080411-cfac35fed413
 	github.com/fbaube/repo v0.0.0-20230702193159-4a0df3ed961a
 	github.com/fbaube/repoutils v0.0.0-20230904080659-aafe24b842a6
-	github.com/fbaube/rowmodels v0.0.0-20231218215515-c844fa325e81
+	github.com/fbaube/rowmodels v0.0.0-20231220164544-d75ca55b43ab
 	github.com/fbaube/sqlite3 v0.0.0-20230623201839-76cebbc048ba
 	github.com/fbaube/stringutils v0.0.0-20231208083612-f585d951ce32
 )
@@ -25,7 +25,7 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mgutz/str v1.2.0 // indirect
-	golang.org/x/exp v0.0.0-20231214170342-aacd6d4b4611 // indirect
+	golang.org/x/exp v0.0.0-20231219180239-dc181d75b848 // indirect
 	golang.org/x/net v0.19.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect
 	golang.org/x/tools v0.16.1 // indirect

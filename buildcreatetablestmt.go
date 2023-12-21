@@ -3,7 +3,6 @@ package sqlite
 import (
 	"fmt"
 	D "github.com/fbaube/dsmnd"
-	// FU "github.com/fbaube/fileutils"
 	RU "github.com/fbaube/repoutils"
 	S "strings"
 	// "time"
@@ -15,19 +14,6 @@ Create Table [ If Not Exists ] [schemaname.]tablename
 1) as select-statement
 2) ( columndef,+ tableconstraint,* )
 [ table-options ] ;
-*/
-
-/* REF
-TABL Fundatype = "tabl" // This datum describes a table !
-INTG = "1234" // "INT"   // SQLITE_INTEGER 1
-FLOT = "1.0f" // "FLOAT" // SQLITE_FLOAT   2
-TEXT = "AaZz" // "TEXT"  // SQLITE_TEXT    3
-BLOB = "blob" // "BLOB"  // SQLITE_BLOB    4
-NULL = "null" // "NULL"  // SQLITE_NULL    5
-PKEY = "pkey" // PRIMARY KEY (SQLite "INTEGER")
-FKEY = "fkey" // FOREIGN KEY (SQLite "INTEGER")
-LIST = "list" // table type, one per enumeration ??
-OTHR = "othr"
 */
 
 /*
@@ -55,7 +41,7 @@ func (pSR *SqliteRepo) BuildCreateTableStmt(pTD *RU.TableDescriptor) (string, er
 	sb2.WriteString("reposqlite.GenCreTblStmt: ")
 	for _, pCS := range pTD.ColumnSpecs {
 		cnm := pCS.StorName // column name
-		bdt := pCS.BasicDatatype
+		bdt := pCS.Datatype
 		sb2.WriteString(fmt.Sprintf("%s:%s, ", cnm, bdt))
 	}
 	fmt.Printf(sb2.String() + "\n")
@@ -68,12 +54,35 @@ func (pSR *SqliteRepo) BuildCreateTableStmt(pTD *RU.TableDescriptor) (string, er
 
 	for _, pCS := range pTD.ColumnSpecs {
 		colName := pCS.StorName // column name in DB
-		fmt.Sprintf("Creating column: %s \n", pCS.String())
-		switch pCS.BasicDatatype {
-		case "PRKEY": // D.PKEY:
-			panic("DUPE PRIMARY KEY")
+		println("Creating column:", pCS.String())
+		SFT := D.SemanticFieldType(pCS.Datatype)
+		BDT := SFT.BasicDatatype()
 
-		case "FRKEY": // D.FKEY:
+		switch BDT {
+		case D.BDT_TEXT: // maps to SQLITE_TEXT 3
+			sb.WriteString(colName + " text not null,\n")
+		case D.BDT_INTG: // maps to SQLITE_INTEGER 1
+			// filect int not null check (filect >= 0) default 0
+			sb.WriteString(colName + " int not null,\n")
+		/* Unimplem'd:
+		BDT_NIL  = BasicDatatype("nil") 
+		BDT_FLOT // SQLITE_FLOAT   2
+		BDT_BLOB // SQLITE_BLOB    4
+		BDT_NULL // SQLITE_NULL    5
+		BDT_LIST // List (simple one-dimensional lists) 
+		BDT_CLXN // Collection (more-complicated data strux)
+		BDT_OTHR // reserved: expansion 
+		BDT_NONE // reserved 
+		*/
+		case D.BDT_DYTM: // maps to SQLYT_DATETIME 6
+		     println("column DATE-TIME:",
+		     	D.Datum(SFT.Descriptor()).String())
+
+		case D.BDT_KEYY: // PRIMARY/FOREIGN/OTHER KEY (SQLite "INTEGER")
+		switch SFT { 
+		  case D.SFT_PRKEY: 
+			panic("DUPE PRIMARY KEY")
+		  case D.SFT_FRKEY: 
 			//> D.ColumnSpec{D.FKEY, "idx_inbatch", "inbatch",
 			//>  "Input batch of imported content"},
 			// referencing fields's name is idx_inbatch
@@ -121,20 +130,9 @@ func (pSR *SqliteRepo) BuildCreateTableStmt(pTD *RU.TableDescriptor) (string, er
 				return "", fmt.Errorf("Malformed FKEY: "+
 					"%s,%s,%s", refgField, refdTable)
 			}
-		case D.BDT_TEXT:
-			sb.WriteString(colName + " text not null,\n")
-		case D.BDT_INTG:
-			// filect int not null check (filect >= 0) default 0
-			sb.WriteString(colName + " int not null,\n")
-		/* Unimplem'd:
-		case D.FLOT:
-		case D.BLOB:
-		case D.NULL:
-		case D.LIST:
-		case D.OTHR:
-		*/
+		  }
 		default:
-			panic(pCS.BasicDatatype)
+			panic(pCS.Datatype)
 		}
 	}
 	// trim off final ",\n"
